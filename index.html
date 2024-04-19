@@ -59,11 +59,19 @@
       #map {
         border-radius: 20px;
       }
-      .leaflet-container {
+      /* .leaflet-container {
         height: 400px;
         width: 600px;
         max-width: 100%;
         max-height: 100%;
+      } */
+
+      #map {
+        height: 400px;
+        width: 800px;
+      }
+      form {
+        width: 800px;
       }
 
       .form-group {
@@ -87,13 +95,57 @@
         color: #eaeaea;
         font-size: 1.2rem;
       }
+
+      /* For Tablet View */
+      @media screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+        #map {
+          height: 400px;
+          width: 600px;
+        }
+        form {
+          width: 600px;
+        }
+      }
+
+      /* For Mobile Portrait View */
+      @media screen and (max-device-width: 640px) and (orientation: portrait) {
+        #map {
+          height: 400px;
+          width: 200px;
+        }
+        form {
+          width: 200px;
+        }
+      }
+
+      /* For Mobile Landscape View */
+      @media screen and (max-device-width: 640px) and (orientation: landscape) {
+        #map {
+          height: 200px;
+          width: 400px;
+        }
+        form {
+          width: 400px;
+        }
+      }
+
+      /* For Mobile Phones Portrait or Landscape View */
+      @media screen and (max-device-width: 640px) {
+        #map {
+          height: 200px;
+          width: 400px;
+        }
+        form {
+          width: 400px;
+        }
+      }
     </style>
   </head>
   <body>
     <div class="container">
       <div class="glass-container">
-        <div id="map" style="width: 800px; height: 400px"></div>
-        <form action="" style="width: 800px">
+        <div id="map"></div>
+        <form action="">
           <div class="form-group">
             <label for="province">Provinsi</label>
             <input type="text" name="province" id="province" class="province" />
