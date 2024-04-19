@@ -135,6 +135,7 @@
       </div>
     </div>
     <script>
+      /* https://tile.openstreetmap.org/{z}/{x}/{y}.png => Tile Maps Original OSM */
       class Map {
         constructor(map, lat_long) {
           this.map = map;
@@ -151,8 +152,9 @@
           this.marker();
         }
         tile() {
-          L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-            maxZoom: 19,
+          L.tileLayer("http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
+            maxZoom: 20,
+            subdomains: ["mt0", "mt1", "mt2", "mt3"],
           }).addTo(this.map);
         }
         marker() {
@@ -161,7 +163,7 @@
           }).addTo(this.markerLayer);
           this.map.panTo(new L.LatLng(this.lat_long[0], this.lat_long[1]));
           mark.on("dragend", (event) => {
-            setLatLngDragged(event);
+            setLatLngDragged(event, this.map);
           });
         }
         newMarker(latLng) {
@@ -174,7 +176,8 @@
             this.map.panTo(new L.LatLng(latLng[0], latLng[1]));
           }
           mark.on("dragend", (event) => {
-            setLatLngDragged(event);
+            console.log(event);
+            setLatLngDragged(event, this.map);
           });
         }
       }
@@ -191,11 +194,11 @@
           `https://nominatim.openstreetmap.org/reverse?lat=${lat_long[0]}&lon=${lat_long[1]}&format=json`
         );
         const res = await req.json();
-        $(`#province`).val(res.address.state);
-        $(`#city`).val(res.address.city);
+        $(`#province`).val(res.address?.state);
+        $(`#city`).val(res.address?.city);
         $(`#kecamatan`).val(res.address?.subdistrict);
-        $(`#kelurahan`).val(res.address.village);
-        $(`#postcode`).val(res.address.postcode);
+        $(`#kelurahan`).val(res.address?.village);
+        $(`#postcode`).val(res.address?.postcode);
         $(`#lat`).val(res.lat);
         $(`#lng`).val(res.lon);
       }
@@ -205,13 +208,13 @@
         fetchDetail(e.latlng);
       });
 
-      const setLatLng = (event) => {
+      const setLatLngDragged = (event, map) => {
         let marker = event.target;
         let position = marker.getLatLng();
         marker.setLatLng(new L.LatLng(position.lat, position.lng), {
           draggable: "true",
         });
-        this.map.panTo(new L.LatLng(position.lat, position.lng));
+        map.panTo(new L.LatLng(position.lat, position.lng));
         fetchDetail(position);
       };
 
@@ -220,10 +223,26 @@
           `https://nominatim.openstreetmap.org/reverse?lat=${e.lat}&lon=${e.lng}&format=json`
         );
         const res = await req.json();
+        if (res.error) {
+          Toastify({
+            text: res.error,
+            duration: 1000,
+            close: true,
+            gravity: "top",
+            position: "center",
+            stopOnFocus: true,
+            style: {
+              background:
+                // "linear-gradient(to right,rgba(0, 212, 255, 1) 0%, rgba(100, 100, 100, 1) 35%, rgba(0, 212, 255, 1) 100%)",
+                "#eaeaea",
+              color: "#121212",
+            },
+          }).showToast();
+          return;
+        }
         Toastify({
           text: res.display_name,
-          duration: 3000,
-          newWindow: true,
+          duration: 1000,
           close: true,
           gravity: "top",
           position: "center",
@@ -236,11 +255,11 @@
           },
           onClick: function () {}, // Callback after click
         }).showToast();
-        $(`#province`).val(res.address.state);
-        $(`#city`).val(res.address.city);
+        $(`#province`).val(res.address?.state);
+        $(`#city`).val(res.address?.city);
         $(`#kecamatan`).val(res.address?.subdistrict);
-        $(`#kelurahan`).val(res.address.village);
-        $(`#postcode`).val(res.address.postcode);
+        $(`#kelurahan`).val(res.address?.village);
+        $(`#postcode`).val(res.address?.postcode);
         $(`#lat`).val(res.lat);
         $(`#lng`).val(res.lon);
       };
