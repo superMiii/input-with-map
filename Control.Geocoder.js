@@ -1,11 +1,11 @@
-var leafletControlGeocoder = (function (exports, L) {
+let leafletControlGeocoder = (function (exports, L) {
   function _interopNamespace(e) {
     if (e && e.__esModule) return e;
-    var n = Object.create(null);
+    let n = Object.create(null);
     if (e) {
       Object.keys(e).forEach(function (k) {
         if (k !== "default") {
-          var d = Object.getOwnPropertyDescriptor(e, k);
+          let d = Object.getOwnPropertyDescriptor(e, k);
           Object.defineProperty(
             n,
             k,
@@ -25,7 +25,7 @@ var leafletControlGeocoder = (function (exports, L) {
     return n;
   }
 
-  var L__namespace = /*#__PURE__*/ _interopNamespace(L);
+  let L__namespace = /*#__PURE__*/ _interopNamespace(L);
 
   function _inheritsLoose(subClass, superClass) {
     subClass.prototype = Object.create(superClass.prototype);
@@ -62,24 +62,24 @@ var leafletControlGeocoder = (function (exports, L) {
    * @internal
    */
 
-  var lastCallbackId = 0; // Adapted from handlebars.js
+  let lastCallbackId = 0; // Adapted from handlebars.js
   // https://github.com/wycats/handlebars.js/
 
   /**
    * @internal
    */
 
-  var badChars = /[&<>"'`]/g;
+  let badChars = /[&<>"'`]/g;
   /**
    * @internal
    */
 
-  var possible = /[&<>"'`]/;
+  let possible = /[&<>"'`]/;
   /**
    * @internal
    */
 
-  var escape = {
+  let escape = {
     "&": "&amp;",
     "<": "&lt;",
     ">": "&gt;",
@@ -120,10 +120,10 @@ var leafletControlGeocoder = (function (exports, L) {
    */
 
   function jsonp(url, params, callback, context, jsonpParam) {
-    var callbackId = "_l_geocoder_" + lastCallbackId++;
+    let callbackId = "_l_geocoder_" + lastCallbackId++;
     params[jsonpParam || "callback"] = callbackId;
     window[callbackId] = L__namespace.Util.bind(callback, context);
-    var script = document.createElement("script");
+    let script = document.createElement("script");
     script.type = "text/javascript";
     script.src = url + getParamString(params);
     script.id = callbackId;
@@ -134,14 +134,14 @@ var leafletControlGeocoder = (function (exports, L) {
    */
 
   function getJSON(url, params, callback) {
-    var xmlHttp = new XMLHttpRequest();
+    let xmlHttp = new XMLHttpRequest();
 
     xmlHttp.onreadystatechange = function () {
       if (xmlHttp.readyState !== 4) {
         return;
       }
 
-      var message;
+      let message;
 
       if (xmlHttp.status !== 200 && xmlHttp.status !== 304) {
         message = "";
@@ -171,7 +171,7 @@ var leafletControlGeocoder = (function (exports, L) {
 
   function template(str, data) {
     return str.replace(/\{ *([\w_]+) *\}/g, function (str, key) {
-      var value = data[key];
+      let value = data[key];
 
       if (value === undefined) {
         value = "";
@@ -187,16 +187,16 @@ var leafletControlGeocoder = (function (exports, L) {
    */
 
   function getParamString(obj, existingUrl, uppercase) {
-    var params = [];
+    let params = [];
 
-    for (var i in obj) {
-      var key = encodeURIComponent(uppercase ? i.toUpperCase() : i);
-      var value = obj[i];
+    for (let i in obj) {
+      let key = encodeURIComponent(uppercase ? i.toUpperCase() : i);
+      let value = obj[i];
 
       if (!Array.isArray(value)) {
         params.push(key + "=" + encodeURIComponent(String(value)));
       } else {
-        for (var j = 0; j < value.length; j++) {
+        for (let j = 0; j < value.length; j++) {
           params.push(key + "=" + encodeURIComponent(value[j]));
         }
       }
@@ -212,7 +212,7 @@ var leafletControlGeocoder = (function (exports, L) {
    * Implementation of the [ArcGIS geocoder](https://developers.arcgis.com/features/geocoding/)
    */
 
-  var ArcGis = /*#__PURE__*/ (function () {
+  let ArcGis = /*#__PURE__*/ (function () {
     function ArcGis(options) {
       this.options = {
         serviceUrl:
@@ -222,10 +222,10 @@ var leafletControlGeocoder = (function (exports, L) {
       L__namespace.Util.setOptions(this, options);
     }
 
-    var _proto = ArcGis.prototype;
+    let _proto = ArcGis.prototype;
 
     _proto.geocode = function geocode(query, cb, context) {
-      var params = geocodingParams(this.options, {
+      let params = geocodingParams(this.options, {
         token: this.options.apiKey,
         SingleLine: query,
         outFields: "Addr_Type",
@@ -237,13 +237,13 @@ var leafletControlGeocoder = (function (exports, L) {
         this.options.serviceUrl + "/findAddressCandidates",
         params,
         function (data) {
-          var results = [];
+          let results = [];
 
           if (data.candidates && data.candidates.length) {
-            for (var i = 0; i <= data.candidates.length - 1; i++) {
-              var loc = data.candidates[i];
-              var latLng = L__namespace.latLng(loc.location.y, loc.location.x);
-              var latLngBounds = L__namespace.latLngBounds(
+            for (let i = 0; i <= data.candidates.length - 1; i++) {
+              let loc = data.candidates[i];
+              let latLng = L__namespace.latLng(loc.location.y, loc.location.x);
+              let latLngBounds = L__namespace.latLngBounds(
                 L__namespace.latLng(loc.extent.ymax, loc.extent.xmax),
                 L__namespace.latLng(loc.extent.ymin, loc.extent.xmin)
               );
@@ -265,7 +265,7 @@ var leafletControlGeocoder = (function (exports, L) {
     };
 
     _proto.reverse = function reverse(location, scale, cb, context) {
-      var params = reverseParams(this.options, {
+      let params = reverseParams(this.options, {
         location: location.lng + "," + location.lat,
         distance: 100,
         f: "json",
@@ -274,11 +274,11 @@ var leafletControlGeocoder = (function (exports, L) {
         this.options.serviceUrl + "/reverseGeocode",
         params,
         function (data) {
-          var result = [];
+          let result = [];
 
           if (data && !data.error) {
-            var center = L__namespace.latLng(data.location.y, data.location.x);
-            var bbox = L__namespace.latLngBounds(center, center);
+            let center = L__namespace.latLng(data.location.y, data.location.x);
+            let bbox = L__namespace.latLngBounds(center, center);
             result.push({
               name: data.address.Match_addr,
               center: center,
@@ -306,7 +306,7 @@ var leafletControlGeocoder = (function (exports, L) {
    * Implementation of the [Bing Locations API](https://docs.microsoft.com/en-us/bingmaps/rest-services/locations/)
    */
 
-  var Bing = /*#__PURE__*/ (function () {
+  let Bing = /*#__PURE__*/ (function () {
     function Bing(options) {
       this.options = {
         serviceUrl: "https://dev.virtualearth.net/REST/v1/Locations",
@@ -314,10 +314,10 @@ var leafletControlGeocoder = (function (exports, L) {
       L__namespace.Util.setOptions(this, options);
     }
 
-    var _proto = Bing.prototype;
+    let _proto = Bing.prototype;
 
     _proto.geocode = function geocode(query, cb, context) {
-      var params = geocodingParams(this.options, {
+      let params = geocodingParams(this.options, {
         query: query,
         key: this.options.apiKey,
       });
@@ -325,15 +325,15 @@ var leafletControlGeocoder = (function (exports, L) {
         this.options.apiKey,
         params,
         function (data) {
-          var results = [];
+          let results = [];
 
           if (data.resourceSets.length > 0) {
             for (
-              var i = data.resourceSets[0].resources.length - 1;
+              let i = data.resourceSets[0].resources.length - 1;
               i >= 0;
               i--
             ) {
-              var resource = data.resourceSets[0].resources[i],
+              let resource = data.resourceSets[0].resources[i],
                 bbox = resource.bbox;
               results[i] = {
                 name: resource.name,
@@ -354,17 +354,17 @@ var leafletControlGeocoder = (function (exports, L) {
     };
 
     _proto.reverse = function reverse(location, scale, cb, context) {
-      var params = reverseParams(this.options, {
+      let params = reverseParams(this.options, {
         key: this.options.apiKey,
       });
       jsonp(
         this.options.serviceUrl + location.lat + "," + location.lng,
         params,
         function (data) {
-          var results = [];
+          let results = [];
 
-          for (var i = data.resourceSets[0].resources.length - 1; i >= 0; i--) {
-            var resource = data.resourceSets[0].resources[i],
+          for (let i = data.resourceSets[0].resources.length - 1; i >= 0; i--) {
+            let resource = data.resourceSets[0].resources[i],
               bbox = resource.bbox;
             results[i] = {
               name: resource.name,
@@ -394,7 +394,7 @@ var leafletControlGeocoder = (function (exports, L) {
     return new Bing(options);
   }
 
-  var Google = /*#__PURE__*/ (function () {
+  let Google = /*#__PURE__*/ (function () {
     function Google(options) {
       this.options = {
         serviceUrl: "https://maps.googleapis.com/maps/api/geocode/json",
@@ -402,21 +402,21 @@ var leafletControlGeocoder = (function (exports, L) {
       L__namespace.Util.setOptions(this, options);
     }
 
-    var _proto = Google.prototype;
+    let _proto = Google.prototype;
 
     _proto.geocode = function geocode(query, cb, context) {
-      var params = geocodingParams(this.options, {
+      let params = geocodingParams(this.options, {
         key: this.options.apiKey,
         address: query,
       });
       getJSON(this.options.serviceUrl, params, function (data) {
-        var results = [];
+        let results = [];
 
         if (data.results && data.results.length) {
-          for (var i = 0; i <= data.results.length - 1; i++) {
-            var loc = data.results[i];
-            var latLng = L__namespace.latLng(loc.geometry.location);
-            var latLngBounds = L__namespace.latLngBounds(
+          for (let i = 0; i <= data.results.length - 1; i++) {
+            let loc = data.results[i];
+            let latLng = L__namespace.latLng(loc.geometry.location);
+            let latLngBounds = L__namespace.latLngBounds(
               L__namespace.latLng(loc.geometry.viewport.northeast),
               L__namespace.latLng(loc.geometry.viewport.southwest)
             );
@@ -434,18 +434,18 @@ var leafletControlGeocoder = (function (exports, L) {
     };
 
     _proto.reverse = function reverse(location, scale, cb, context) {
-      var params = reverseParams(this.options, {
+      let params = reverseParams(this.options, {
         key: this.options.apiKey,
         latlng: location.lat + "," + location.lng,
       });
       getJSON(this.options.serviceUrl, params, function (data) {
-        var results = [];
+        let results = [];
 
         if (data.results && data.results.length) {
-          for (var i = 0; i <= data.results.length - 1; i++) {
-            var loc = data.results[i];
-            var center = L__namespace.latLng(loc.geometry.location);
-            var bbox = L__namespace.latLngBounds(
+          for (let i = 0; i <= data.results.length - 1; i++) {
+            let loc = data.results[i];
+            let center = L__namespace.latLng(loc.geometry.location);
+            let bbox = L__namespace.latLngBounds(
               L__namespace.latLng(loc.geometry.viewport.northeast),
               L__namespace.latLng(loc.geometry.viewport.southwest)
             );
@@ -477,7 +477,7 @@ var leafletControlGeocoder = (function (exports, L) {
    * Implementation of the [HERE Geocoder API](https://developer.here.com/documentation/geocoder/topics/introduction.html)
    */
 
-  var HERE = /*#__PURE__*/ (function () {
+  let HERE = /*#__PURE__*/ (function () {
     function HERE(options) {
       this.options = {
         serviceUrl: "https://geocoder.api.here.com/6.2/",
@@ -491,10 +491,10 @@ var leafletControlGeocoder = (function (exports, L) {
         throw Error("apiKey is not supported, use app_id/app_code instead!");
     }
 
-    var _proto = HERE.prototype;
+    let _proto = HERE.prototype;
 
     _proto.geocode = function geocode(query, cb, context) {
-      var params = geocodingParams(this.options, {
+      let params = geocodingParams(this.options, {
         searchtext: query,
         gen: 9,
         app_id: this.options.app_id,
@@ -511,13 +511,13 @@ var leafletControlGeocoder = (function (exports, L) {
     };
 
     _proto.reverse = function reverse(location, scale, cb, context) {
-      var prox = location.lat + "," + location.lng;
+      let prox = location.lat + "," + location.lng;
 
       if (this.options.reverseGeocodeProxRadius) {
         prox += "," + this.options.reverseGeocodeProxRadius;
       }
 
-      var params = reverseParams(this.options, {
+      let params = reverseParams(this.options, {
         prox: prox,
         mode: "retrieveAddresses",
         app_id: this.options.app_id,
@@ -536,16 +536,16 @@ var leafletControlGeocoder = (function (exports, L) {
 
     _proto.getJSON = function getJSON$1(url, params, cb, context) {
       getJSON(url, params, function (data) {
-        var results = [];
+        let results = [];
 
         if (data.response.view && data.response.view.length) {
-          for (var i = 0; i <= data.response.view[0].result.length - 1; i++) {
-            var loc = data.response.view[0].result[i].location;
-            var center = L__namespace.latLng(
+          for (let i = 0; i <= data.response.view[0].result.length - 1; i++) {
+            let loc = data.response.view[0].result[i].location;
+            let center = L__namespace.latLng(
               loc.displayPosition.latitude,
               loc.displayPosition.longitude
             );
-            var bbox = L__namespace.latLngBounds(
+            let bbox = L__namespace.latLngBounds(
               L__namespace.latLng(
                 loc.mapView.topLeft.latitude,
                 loc.mapView.topLeft.longitude
@@ -574,7 +574,7 @@ var leafletControlGeocoder = (function (exports, L) {
    * Implementation of the new [HERE Geocoder API](https://developer.here.com/documentation/geocoding-search-api/api-reference-swagger.html)
    */
 
-  var HEREv2 = /*#__PURE__*/ (function () {
+  let HEREv2 = /*#__PURE__*/ (function () {
     function HEREv2(options) {
       this.options = {
         serviceUrl: "https://geocode.search.hereapi.com/v1",
@@ -586,10 +586,10 @@ var leafletControlGeocoder = (function (exports, L) {
       L__namespace.Util.setOptions(this, options);
     }
 
-    var _proto2 = HEREv2.prototype;
+    let _proto2 = HEREv2.prototype;
 
     _proto2.geocode = function geocode(query, cb, context) {
-      var params = geocodingParams(this.options, {
+      let params = geocodingParams(this.options, {
         q: query,
         apiKey: this.options.apiKey,
         limit: this.options.maxResults,
@@ -605,7 +605,7 @@ var leafletControlGeocoder = (function (exports, L) {
     };
 
     _proto2.reverse = function reverse(location, scale, cb, context) {
-      var params = reverseParams(this.options, {
+      let params = reverseParams(this.options, {
         at: location.lat + "," + location.lng,
         limit: this.options.reverseGeocodeProxRadius,
         apiKey: this.options.apiKey,
@@ -620,16 +620,16 @@ var leafletControlGeocoder = (function (exports, L) {
 
     _proto2.getJSON = function getJSON$1(url, params, cb, context) {
       getJSON(url, params, function (data) {
-        var results = [];
+        let results = [];
 
         if (data.items && data.items.length) {
-          for (var i = 0; i <= data.items.length - 1; i++) {
-            var item = data.items[i];
-            var latLng = L__namespace.latLng(
+          for (let i = 0; i <= data.items.length - 1; i++) {
+            let item = data.items[i];
+            let latLng = L__namespace.latLng(
               item.position.lat,
               item.position.lng
             );
-            var bbox = void 0;
+            let bbox = void 0;
 
             if (item.mapView) {
               bbox = L__namespace.latLngBounds(
@@ -679,7 +679,7 @@ var leafletControlGeocoder = (function (exports, L) {
    */
 
   function parseLatLng(query) {
-    var match; // regex from https://github.com/openstreetmap/openstreetmap-website/blob/master/app/controllers/geocoder_controller.rb
+    let match; // regex from https://github.com/openstreetmap/openstreetmap-website/blob/master/app/controllers/geocoder_controller.rb
 
     if (
       (match = query.match(
@@ -757,7 +757,7 @@ var leafletControlGeocoder = (function (exports, L) {
    * Parses basic latitude/longitude strings such as `'50.06773 14.37742'`, `'N50.06773 W14.37742'`, `'S 50° 04.064 E 014° 22.645'`, or `'S 50° 4′ 03.828″, W 14° 22′ 38.712″'`
    */
 
-  var LatLng = /*#__PURE__*/ (function () {
+  let LatLng = /*#__PURE__*/ (function () {
     function LatLng(options) {
       this.options = {
         next: undefined,
@@ -766,13 +766,13 @@ var leafletControlGeocoder = (function (exports, L) {
       L__namespace.Util.setOptions(this, options);
     }
 
-    var _proto = LatLng.prototype;
+    let _proto = LatLng.prototype;
 
     _proto.geocode = function geocode(query, cb, context) {
-      var center = parseLatLng(query);
+      let center = parseLatLng(query);
 
       if (center) {
-        var results = [
+        let results = [
           {
             name: query,
             center: center,
@@ -800,7 +800,7 @@ var leafletControlGeocoder = (function (exports, L) {
    * Implementation of the [Mapbox Geocoding](https://www.mapbox.com/api-documentation/#geocoding)
    */
 
-  var Mapbox = /*#__PURE__*/ (function () {
+  let Mapbox = /*#__PURE__*/ (function () {
     function Mapbox(options) {
       this.options = {
         serviceUrl: "https://api.mapbox.com/geocoding/v5/mapbox.places/",
@@ -808,16 +808,16 @@ var leafletControlGeocoder = (function (exports, L) {
       L__namespace.Util.setOptions(this, options);
     }
 
-    var _proto = Mapbox.prototype;
+    let _proto = Mapbox.prototype;
 
     _proto._getProperties = function _getProperties(loc) {
-      var properties = {
+      let properties = {
         text: loc.text,
         address: loc.address,
       };
 
-      for (var j = 0; j < (loc.context || []).length; j++) {
-        var id = loc.context[j].id.split(".")[0];
+      for (let j = 0; j < (loc.context || []).length; j++) {
+        let id = loc.context[j].id.split(".")[0];
         properties[id] = loc.context[j].text; // Get country code when available
 
         if (loc.context[j].short_code) {
@@ -829,9 +829,9 @@ var leafletControlGeocoder = (function (exports, L) {
     };
 
     _proto.geocode = function geocode(query, cb, context) {
-      var _this = this;
+      let _this = this;
 
-      var params = geocodingParams(this.options, {
+      let params = geocodingParams(this.options, {
         access_token: this.options.apiKey,
       });
 
@@ -847,13 +847,13 @@ var leafletControlGeocoder = (function (exports, L) {
         this.options.serviceUrl + encodeURIComponent(query) + ".json",
         params,
         function (data) {
-          var results = [];
+          let results = [];
 
           if (data.features && data.features.length) {
-            for (var i = 0; i <= data.features.length - 1; i++) {
-              var loc = data.features[i];
-              var center = L__namespace.latLng(loc.center.reverse());
-              var bbox = void 0;
+            for (let i = 0; i <= data.features.length - 1; i++) {
+              let loc = data.features[i];
+              let center = L__namespace.latLng(loc.center.reverse());
+              let bbox = void 0;
 
               if (loc.bbox) {
                 bbox = L__namespace.latLngBounds(
@@ -883,21 +883,21 @@ var leafletControlGeocoder = (function (exports, L) {
     };
 
     _proto.reverse = function reverse(location, scale, cb, context) {
-      var _this2 = this;
+      let _this2 = this;
 
-      var url =
+      let url =
         this.options.serviceUrl + location.lng + "," + location.lat + ".json";
-      var param = reverseParams(this.options, {
+      let param = reverseParams(this.options, {
         access_token: this.options.apiKey,
       });
       getJSON(url, param, function (data) {
-        var results = [];
+        let results = [];
 
         if (data.features && data.features.length) {
-          for (var i = 0; i <= data.features.length - 1; i++) {
-            var loc = data.features[i];
-            var center = L__namespace.latLng(loc.center.reverse());
-            var bbox = void 0;
+          for (let i = 0; i <= data.features.length - 1; i++) {
+            let loc = data.features[i];
+            let center = L__namespace.latLng(loc.center.reverse());
+            let bbox = void 0;
 
             if (loc.bbox) {
               bbox = L__namespace.latLngBounds(
@@ -936,7 +936,7 @@ var leafletControlGeocoder = (function (exports, L) {
    * Implementation of the [MapQuest Geocoding API](http://developer.mapquest.com/web/products/dev-services/geocoding-ws)
    */
 
-  var MapQuest = /*#__PURE__*/ (function () {
+  let MapQuest = /*#__PURE__*/ (function () {
     function MapQuest(options) {
       this.options = {
         serviceUrl: "https://www.mapquestapi.com/geocoding/v1",
@@ -947,7 +947,7 @@ var leafletControlGeocoder = (function (exports, L) {
       this.options.apiKey = decodeURIComponent(this.options.apiKey);
     }
 
-    var _proto = MapQuest.prototype;
+    let _proto = MapQuest.prototype;
 
     _proto._formatName = function _formatName() {
       return [].slice
@@ -959,7 +959,7 @@ var leafletControlGeocoder = (function (exports, L) {
     };
 
     _proto.geocode = function geocode(query, cb, context) {
-      var params = geocodingParams(this.options, {
+      let params = geocodingParams(this.options, {
         key: this.options.apiKey,
         location: query,
         limit: 5,
@@ -969,12 +969,12 @@ var leafletControlGeocoder = (function (exports, L) {
         this.options.serviceUrl + "/address",
         params,
         L__namespace.Util.bind(function (data) {
-          var results = [];
+          let results = [];
 
           if (data.results && data.results[0].locations) {
-            for (var i = data.results[0].locations.length - 1; i >= 0; i--) {
-              var loc = data.results[0].locations[i];
-              var center = L__namespace.latLng(loc.latLng);
+            for (let i = data.results[0].locations.length - 1; i >= 0; i--) {
+              let loc = data.results[0].locations[i];
+              let center = L__namespace.latLng(loc.latLng);
               results[i] = {
                 name: this._formatName(
                   loc.street,
@@ -994,7 +994,7 @@ var leafletControlGeocoder = (function (exports, L) {
     };
 
     _proto.reverse = function reverse(location, scale, cb, context) {
-      var params = reverseParams(this.options, {
+      let params = reverseParams(this.options, {
         key: this.options.apiKey,
         location: location.lat + "," + location.lng,
         outputFormat: "json",
@@ -1003,12 +1003,12 @@ var leafletControlGeocoder = (function (exports, L) {
         this.options.serviceUrl + "/reverse",
         params,
         L__namespace.Util.bind(function (data) {
-          var results = [];
+          let results = [];
 
           if (data.results && data.results[0].locations) {
-            for (var i = data.results[0].locations.length - 1; i >= 0; i--) {
-              var loc = data.results[0].locations[i];
-              var center = L__namespace.latLng(loc.latLng);
+            for (let i = data.results[0].locations.length - 1; i >= 0; i--) {
+              let loc = data.results[0].locations[i];
+              let center = L__namespace.latLng(loc.latLng);
               results[i] = {
                 name: this._formatName(
                   loc.street,
@@ -1042,7 +1042,7 @@ var leafletControlGeocoder = (function (exports, L) {
    * Implementation of the [Neutrino API](https://www.neutrinoapi.com/api/geocode-address/)
    */
 
-  var Neutrino = /*#__PURE__*/ (function () {
+  let Neutrino = /*#__PURE__*/ (function () {
     function Neutrino(options) {
       this.options = {
         userId: undefined,
@@ -1052,10 +1052,10 @@ var leafletControlGeocoder = (function (exports, L) {
       L__namespace.Util.setOptions(this, options);
     } // https://www.neutrinoapi.com/api/geocode-address/
 
-    var _proto = Neutrino.prototype;
+    let _proto = Neutrino.prototype;
 
     _proto.geocode = function geocode(query, cb, context) {
-      var params = geocodingParams(this.options, {
+      let params = geocodingParams(this.options, {
         apiKey: this.options.apiKey,
         userId: this.options.userId,
         //get three words and make a dot based string
@@ -1065,15 +1065,15 @@ var leafletControlGeocoder = (function (exports, L) {
         this.options.serviceUrl + "geocode-address",
         params,
         function (data) {
-          var results = [];
+          let results = [];
 
           if (data.locations) {
             data.geometry = data.locations[0];
-            var center = L__namespace.latLng(
+            let center = L__namespace.latLng(
               data.geometry["latitude"],
               data.geometry["longitude"]
             );
-            var bbox = L__namespace.latLngBounds(center, center);
+            let bbox = L__namespace.latLngBounds(center, center);
             results[0] = {
               name: data.geometry.address,
               bbox: bbox,
@@ -1091,7 +1091,7 @@ var leafletControlGeocoder = (function (exports, L) {
     }; // https://www.neutrinoapi.com/api/geocode-reverse/
 
     _proto.reverse = function reverse(location, scale, cb, context) {
-      var params = reverseParams(this.options, {
+      let params = reverseParams(this.options, {
         apiKey: this.options.apiKey,
         userId: this.options.userId,
         latitude: location.lat,
@@ -1101,11 +1101,11 @@ var leafletControlGeocoder = (function (exports, L) {
         this.options.serviceUrl + "geocode-reverse",
         params,
         function (data) {
-          var results = [];
+          let results = [];
 
           if (data.status.status == 200 && data.found) {
-            var center = L__namespace.latLng(location.lat, location.lng);
-            var bbox = L__namespace.latLngBounds(center, center);
+            let center = L__namespace.latLng(location.lat, location.lng);
+            let bbox = L__namespace.latLngBounds(center, center);
             results[0] = {
               name: data.address,
               bbox: bbox,
@@ -1137,14 +1137,14 @@ var leafletControlGeocoder = (function (exports, L) {
    * Unless using your own Nominatim installation, please refer to the [Nominatim usage policy](https://operations.osmfoundation.org/policies/nominatim/).
    */
 
-  var Nominatim = /*#__PURE__*/ (function () {
+  let Nominatim = /*#__PURE__*/ (function () {
     function Nominatim(options) {
       this.options = {
         serviceUrl: "https://nominatim.openstreetmap.org/",
         htmlTemplate: function htmlTemplate(r) {
-          var address = r.address;
-          var className;
-          var parts = [];
+          let address = r.address;
+          let className;
+          let parts = [];
 
           if (address.road || address.building) {
             parts.push("{building} {road} {house_number}");
@@ -1181,24 +1181,24 @@ var leafletControlGeocoder = (function (exports, L) {
       L__namespace.Util.setOptions(this, options || {});
     }
 
-    var _proto = Nominatim.prototype;
+    let _proto = Nominatim.prototype;
 
     _proto.geocode = function geocode(query, cb, context) {
-      var _this = this;
+      let _this = this;
 
-      var params = geocodingParams(this.options, {
+      let params = geocodingParams(this.options, {
         q: query,
         limit: 5,
         format: "json",
         addressdetails: 1,
       });
       getJSON(this.options.serviceUrl + "search", params, function (data) {
-        var results = [];
+        let results = [];
 
-        for (var i = data.length - 1; i >= 0; i--) {
-          var bbox = data[i].boundingbox;
+        for (let i = data.length - 1; i >= 0; i--) {
+          let bbox = data[i].boundingbox;
 
-          for (var j = 0; j < 4; j++) {
+          for (let j = 0; j < 4; j++) {
             bbox[j] = +bbox[j];
           }
 
@@ -1222,9 +1222,9 @@ var leafletControlGeocoder = (function (exports, L) {
     };
 
     _proto.reverse = function reverse(location, scale, cb, context) {
-      var _this2 = this;
+      let _this2 = this;
 
-      var params = reverseParams(this.options, {
+      let params = reverseParams(this.options, {
         lat: location.lat,
         lon: location.lng,
         zoom: Math.round(Math.log(scale / 256) / Math.log(2)),
@@ -1232,11 +1232,11 @@ var leafletControlGeocoder = (function (exports, L) {
         format: "json",
       });
       getJSON(this.options.serviceUrl + "reverse", params, function (data) {
-        var result = [];
+        let result = [];
 
         if (data && data.lat && data.lon) {
-          var center = L__namespace.latLng(data.lat, data.lon);
-          var bbox = L__namespace.latLngBounds(center, center);
+          let center = L__namespace.latLng(data.lat, data.lon);
+          let bbox = L__namespace.latLngBounds(center, center);
           result.push({
             name: data.display_name,
             html: _this2.options.htmlTemplate
@@ -1267,17 +1267,17 @@ var leafletControlGeocoder = (function (exports, L) {
    * Implementation of the [Plus codes](https://plus.codes/) (formerly OpenLocationCode) (requires [open-location-code](https://www.npmjs.com/package/open-location-code))
    */
 
-  var OpenLocationCode = /*#__PURE__*/ (function () {
+  let OpenLocationCode = /*#__PURE__*/ (function () {
     function OpenLocationCode(options) {
       L__namespace.Util.setOptions(this, options);
     }
 
-    var _proto = OpenLocationCode.prototype;
+    let _proto = OpenLocationCode.prototype;
 
     _proto.geocode = function geocode(query, cb, context) {
       try {
-        var decoded = this.options.OpenLocationCode.decode(query);
-        var result = {
+        let decoded = this.options.OpenLocationCode.decode(query);
+        let result = {
           name: query,
           center: L__namespace.latLng(
             decoded.latitudeCenter,
@@ -1298,12 +1298,12 @@ var leafletControlGeocoder = (function (exports, L) {
 
     _proto.reverse = function reverse(location, scale, cb, context) {
       try {
-        var code = this.options.OpenLocationCode.encode(
+        let code = this.options.OpenLocationCode.encode(
           location.lat,
           location.lng,
           this.options.codeLength
         );
-        var result = {
+        let result = {
           name: code,
           center: L__namespace.latLng(location.lat, location.lng),
           bbox: L__namespace.latLngBounds(
@@ -1334,7 +1334,7 @@ var leafletControlGeocoder = (function (exports, L) {
    * Implementation of the [OpenCage Data API](https://opencagedata.com/)
    */
 
-  var OpenCage = /*#__PURE__*/ (function () {
+  let OpenCage = /*#__PURE__*/ (function () {
     function OpenCage(options) {
       this.options = {
         serviceUrl: "https://api.opencagedata.com/geocode/v1/json",
@@ -1342,21 +1342,21 @@ var leafletControlGeocoder = (function (exports, L) {
       L__namespace.Util.setOptions(this, options);
     }
 
-    var _proto = OpenCage.prototype;
+    let _proto = OpenCage.prototype;
 
     _proto.geocode = function geocode(query, cb, context) {
-      var params = geocodingParams(this.options, {
+      let params = geocodingParams(this.options, {
         key: this.options.apiKey,
         q: query,
       });
       getJSON(this.options.serviceUrl, params, function (data) {
-        var results = [];
+        let results = [];
 
         if (data.results && data.results.length) {
-          for (var i = 0; i < data.results.length; i++) {
-            var loc = data.results[i];
-            var center = L__namespace.latLng(loc.geometry);
-            var bbox = void 0;
+          for (let i = 0; i < data.results.length; i++) {
+            let loc = data.results[i];
+            let center = L__namespace.latLng(loc.geometry);
+            let bbox = void 0;
 
             if (loc.annotations && loc.annotations.bounds) {
               bbox = L__namespace.latLngBounds(
@@ -1384,18 +1384,18 @@ var leafletControlGeocoder = (function (exports, L) {
     };
 
     _proto.reverse = function reverse(location, scale, cb, context) {
-      var params = reverseParams(this.options, {
+      let params = reverseParams(this.options, {
         key: this.options.apiKey,
         q: [location.lat, location.lng].join(","),
       });
       getJSON(this.options.serviceUrl, params, function (data) {
-        var results = [];
+        let results = [];
 
         if (data.results && data.results.length) {
-          for (var i = 0; i < data.results.length; i++) {
-            var loc = data.results[i];
-            var center = L__namespace.latLng(loc.geometry);
-            var bbox = void 0;
+          for (let i = 0; i < data.results.length; i++) {
+            let loc = data.results[i];
+            let center = L__namespace.latLng(loc.geometry);
+            let bbox = void 0;
 
             if (loc.annotations && loc.annotations.bounds) {
               bbox = L__namespace.latLngBounds(
@@ -1428,7 +1428,7 @@ var leafletControlGeocoder = (function (exports, L) {
    * Implementation of the [Pelias](https://pelias.io/), [geocode.earth](https://geocode.earth/) geocoder (formerly Mapzen Search)
    */
 
-  var Pelias = /*#__PURE__*/ (function () {
+  let Pelias = /*#__PURE__*/ (function () {
     function Pelias(options) {
       this.options = {
         serviceUrl: "https://api.geocode.earth/v1",
@@ -1437,12 +1437,12 @@ var leafletControlGeocoder = (function (exports, L) {
       L__namespace.Util.setOptions(this, options);
     }
 
-    var _proto = Pelias.prototype;
+    let _proto = Pelias.prototype;
 
     _proto.geocode = function geocode(query, cb, context) {
-      var _this = this;
+      let _this = this;
 
-      var params = geocodingParams(this.options, {
+      let params = geocodingParams(this.options, {
         api_key: this.options.apiKey,
         text: query,
       });
@@ -1452,9 +1452,9 @@ var leafletControlGeocoder = (function (exports, L) {
     };
 
     _proto.suggest = function suggest(query, cb, context) {
-      var _this2 = this;
+      let _this2 = this;
 
-      var params = geocodingParams(this.options, {
+      let params = geocodingParams(this.options, {
         api_key: this.options.apiKey,
         text: query,
       });
@@ -1471,9 +1471,9 @@ var leafletControlGeocoder = (function (exports, L) {
     };
 
     _proto.reverse = function reverse(location, scale, cb, context) {
-      var _this3 = this;
+      let _this3 = this;
 
-      var params = reverseParams(this.options, {
+      let params = reverseParams(this.options, {
         api_key: this.options.apiKey,
         "point.lat": location.lat,
         "point.lon": location.lng,
@@ -1484,15 +1484,15 @@ var leafletControlGeocoder = (function (exports, L) {
     };
 
     _proto._parseResults = function _parseResults(data, bboxname) {
-      var results = [];
+      let results = [];
       L__namespace.geoJSON(data, {
         pointToLayer: function pointToLayer(feature, latlng) {
           return L__namespace.circleMarker(latlng);
         },
         onEachFeature: function onEachFeature(feature, layer) {
-          var result = {};
-          var bbox;
-          var center;
+          let result = {};
+          let bbox;
+          let center;
 
           if (layer.getBounds) {
             bbox = layer.getBounds();
@@ -1532,25 +1532,25 @@ var leafletControlGeocoder = (function (exports, L) {
   function pelias(options) {
     return new Pelias(options);
   }
-  var GeocodeEarth = Pelias;
-  var geocodeEarth = pelias;
+  let GeocodeEarth = Pelias;
+  let geocodeEarth = pelias;
   /**
    * r.i.p.
    * @deprecated
    */
 
-  var Mapzen = Pelias;
+  let Mapzen = Pelias;
   /**
    * r.i.p.
    * @deprecated
    */
 
-  var mapzen = pelias;
+  let mapzen = pelias;
   /**
    * Implementation of the [Openrouteservice](https://openrouteservice.org/dev/#/api-docs/geocode) geocoder
    */
 
-  var Openrouteservice = /*#__PURE__*/ (function (_Pelias) {
+  let Openrouteservice = /*#__PURE__*/ (function (_Pelias) {
     _inheritsLoose(Openrouteservice, _Pelias);
 
     function Openrouteservice(options) {
@@ -1582,7 +1582,7 @@ var leafletControlGeocoder = (function (exports, L) {
    * Implementation of the [Photon](http://photon.komoot.de/) geocoder
    */
 
-  var Photon = /*#__PURE__*/ (function () {
+  let Photon = /*#__PURE__*/ (function () {
     function Photon(options) {
       this.options = {
         serviceUrl: "https://photon.komoot.io/api/",
@@ -1601,10 +1601,10 @@ var leafletControlGeocoder = (function (exports, L) {
       L__namespace.Util.setOptions(this, options);
     }
 
-    var _proto = Photon.prototype;
+    let _proto = Photon.prototype;
 
     _proto.geocode = function geocode(query, cb, context) {
-      var params = geocodingParams(this.options, {
+      let params = geocodingParams(this.options, {
         q: query,
       });
       getJSON(
@@ -1621,7 +1621,7 @@ var leafletControlGeocoder = (function (exports, L) {
     };
 
     _proto.reverse = function reverse(latLng, scale, cb, context) {
-      var params = reverseParams(this.options, {
+      let params = reverseParams(this.options, {
         lat: latLng.lat,
         lon: latLng.lng,
       });
@@ -1635,15 +1635,15 @@ var leafletControlGeocoder = (function (exports, L) {
     };
 
     _proto._decodeFeatures = function _decodeFeatures(data) {
-      var results = [];
+      let results = [];
 
       if (data && data.features) {
-        for (var i = 0; i < data.features.length; i++) {
-          var f = data.features[i];
-          var c = f.geometry.coordinates;
-          var center = L__namespace.latLng(c[1], c[0]);
-          var extent = f.properties.extent;
-          var bbox = extent
+        for (let i = 0; i < data.features.length; i++) {
+          let f = data.features[i];
+          let c = f.geometry.coordinates;
+          let center = L__namespace.latLng(c[1], c[0]);
+          let extent = f.properties.extent;
+          let bbox = extent
             ? L__namespace.latLngBounds(
                 [extent[1], extent[0]],
                 [extent[3], extent[2]]
@@ -1690,7 +1690,7 @@ var leafletControlGeocoder = (function (exports, L) {
    * Implementation of the What3Words service
    */
 
-  var What3Words = /*#__PURE__*/ (function () {
+  let What3Words = /*#__PURE__*/ (function () {
     function What3Words(options) {
       this.options = {
         serviceUrl: "https://api.what3words.com/v2/",
@@ -1698,7 +1698,7 @@ var leafletControlGeocoder = (function (exports, L) {
       L__namespace.Util.setOptions(this, options);
     }
 
-    var _proto = What3Words.prototype;
+    let _proto = What3Words.prototype;
 
     _proto.geocode = function geocode(query, cb, context) {
       //get three words and make a dot based string
@@ -1709,14 +1709,14 @@ var leafletControlGeocoder = (function (exports, L) {
           addr: query.split(/\s+/).join("."),
         }),
         function (data) {
-          var results = [];
+          let results = [];
 
           if (data.geometry) {
-            var latLng = L__namespace.latLng(
+            let latLng = L__namespace.latLng(
               data.geometry["lat"],
               data.geometry["lng"]
             );
-            var latLngBounds = L__namespace.latLngBounds(latLng, latLng);
+            let latLngBounds = L__namespace.latLngBounds(latLng, latLng);
             results[0] = {
               name: data.words,
               bbox: latLngBounds,
@@ -1741,14 +1741,14 @@ var leafletControlGeocoder = (function (exports, L) {
           coords: [location.lat, location.lng].join(","),
         }),
         function (data) {
-          var results = [];
+          let results = [];
 
           if (data.status.status == 200) {
-            var center = L__namespace.latLng(
+            let center = L__namespace.latLng(
               data.geometry["lat"],
               data.geometry["lng"]
             );
-            var bbox = L__namespace.latLngBounds(center, center);
+            let bbox = L__namespace.latLngBounds(center, center);
             results[0] = {
               name: data.words,
               bbox: bbox,
@@ -1772,7 +1772,7 @@ var leafletControlGeocoder = (function (exports, L) {
     return new What3Words(options);
   }
 
-  var geocoders = {
+  let geocoders = {
     __proto__: null,
     geocodingParams: geocodingParams,
     reverseParams: reverseParams,
@@ -1820,7 +1820,7 @@ var leafletControlGeocoder = (function (exports, L) {
    * @internal
    */
 
-  var EventedControl = // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let EventedControl = // eslint-disable-next-line @typescript-eslint/no-unused-lets
     function EventedControl() {
       // empty
     };
@@ -1837,7 +1837,7 @@ var leafletControlGeocoder = (function (exports, L) {
    * This is the geocoder control. It works like any other [Leaflet control](https://leafletjs.com/reference.html#control), and is added to the map.
    */
 
-  var GeocoderControl = /*#__PURE__*/ (function (_EventedControl) {
+  let GeocoderControl = /*#__PURE__*/ (function (_EventedControl) {
     _inheritsLoose(GeocoderControl, _EventedControl);
 
     /**
@@ -1845,7 +1845,7 @@ var leafletControlGeocoder = (function (exports, L) {
      * @param options the options
      */
     function GeocoderControl(options) {
-      var _this;
+      let _this;
 
       _this = _EventedControl.call(this, options) || this;
       _this.options = {
@@ -1873,7 +1873,7 @@ var leafletControlGeocoder = (function (exports, L) {
       return _this;
     }
 
-    var _proto = GeocoderControl.prototype;
+    let _proto = GeocoderControl.prototype;
 
     _proto.addThrobberClass = function addThrobberClass() {
       L__namespace.DomUtil.addClass(
@@ -1895,19 +1895,19 @@ var leafletControlGeocoder = (function (exports, L) {
      */
 
     _proto.onAdd = function onAdd(map) {
-      var _this2 = this;
+      let _this2 = this;
 
-      var className = "leaflet-control-geocoder";
-      var container = L__namespace.DomUtil.create(
+      let className = "leaflet-control-geocoder";
+      let container = L__namespace.DomUtil.create(
         "div",
         className + " leaflet-bar"
       );
-      var icon = L__namespace.DomUtil.create(
+      let icon = L__namespace.DomUtil.create(
         "button",
         className + "-icon",
         container
       );
-      var form = (this._form = L__namespace.DomUtil.create(
+      let form = (this._form = L__namespace.DomUtil.create(
         "div",
         className + "-form",
         container
@@ -1917,7 +1917,7 @@ var leafletControlGeocoder = (function (exports, L) {
       icon.innerHTML = "&nbsp;";
       icon.type = "button";
       icon.setAttribute("aria-label", this.options.iconLabel);
-      var input = (this._input = L__namespace.DomUtil.create(
+      let input = (this._input = L__namespace.DomUtil.create(
         "input",
         "",
         form
@@ -2043,7 +2043,7 @@ var leafletControlGeocoder = (function (exports, L) {
           "leaflet-control-geocoder-options-open"
         );
 
-        for (var i = 0; i < results.length; i++) {
+        for (let i = 0; i < results.length; i++) {
           this._alts.appendChild(this._createAlt(results[i], i));
         }
       } else {
@@ -2063,67 +2063,36 @@ var leafletControlGeocoder = (function (exports, L) {
      */
 
     _proto.markGeocode = async function markGeocode(event) {
-      var result = event.geocode;
+      let result = event.geocode;
 
       this._map.fitBounds(result.bbox);
       if (this._geocodeMarker) {
         this._map.removeLayer(this._geocodeMarker);
       }
 
-      //   this._map.eachLayer(function (layer) {
-      //     if (!layer._url) {
-      //       maps.removeLayer(layer);
-      //     }
-      //   });
-
-      this._geocodeMarker = new L__namespace.Marker(result.center)
-        // .bindPopup(result.html || result.name)
-        .addTo(this._map);
+      // this._geocodeMarker = new L__namespace.Marker(result.center)
+      // .bindPopup(result.html || result.name)
+      // .addTo(this._map);
       // .openPopup();
-      let mark = L.layerGroup();
-      mark.clearLayers();
-      const req = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?lat=${result.center.lat}&lon=${result.center.lng}&format=json`
-      );
-      const res = await req.json();
-      Toastify({
-        text: res.display_name,
-        duration: 3000,
-        newWindow: true,
-        close: true,
-        gravity: "top",
-        position: "center",
-        stopOnFocus: true,
-        style: {
-          background:
-            // "linear-gradient(to right,rgba(0, 212, 255, 1) 0%, rgba(100, 100, 100, 1) 35%, rgba(0, 212, 255, 1) 100%)",
-            "#eaeaea",
-          color: "#121212",
-        },
-        onClick: function () {}, // Callback after click
-      }).showToast();
-      $(`#province`).val(res.address.state);
-      $(`#city`).val(res.address.city);
-      $(`#kecamatan`).val(res.address?.subdistrict);
-      $(`#kelurahan`).val(res.address.village);
-      $(`#postcode`).val(res.address.postcode);
+      this.geocodeMarker = map.newMarker(result.center);
+      fetchDetail(result.center);
       return this;
     };
 
     _proto._geocode = function _geocode(suggest) {
-      var _this3 = this;
+      let _this3 = this;
 
-      var value = this._input.value;
+      let value = this._input.value;
 
       if (!suggest && value.length < this.options.queryMinLength) {
         return;
       }
 
-      var requestCount = ++this._requestCount;
+      let requestCount = ++this._requestCount;
 
-      var cb = function cb(results) {
+      let cb = function cb(results) {
         if (requestCount === _this3._requestCount) {
-          var _event = {
+          let _event = {
             input: value,
             results: results,
           };
@@ -2140,7 +2109,7 @@ var leafletControlGeocoder = (function (exports, L) {
         this._clearResults();
       }
 
-      var event = {
+      let event = {
         input: value,
       };
       this.fire(suggest ? "startsuggest" : "startgeocode", event);
@@ -2153,7 +2122,7 @@ var leafletControlGeocoder = (function (exports, L) {
     };
 
     _proto._geocodeResultSelected = function _geocodeResultSelected(geocode) {
-      var event = {
+      let event = {
         geocode: geocode,
       };
       this.fire("markgeocode", event);
@@ -2231,9 +2200,9 @@ var leafletControlGeocoder = (function (exports, L) {
     };
 
     _proto._createAlt = function _createAlt(result, index) {
-      var _this4 = this;
+      let _this4 = this;
 
-      var li = L__namespace.DomUtil.create("li", ""),
+      let li = L__namespace.DomUtil.create("li", ""),
         a = L__namespace.DomUtil.create("a", "", li),
         icon =
           this.options.showResultIcons && result.icon
@@ -2284,9 +2253,9 @@ var leafletControlGeocoder = (function (exports, L) {
     };
 
     _proto._keydown = function _keydown(e) {
-      var _this5 = this;
+      let _this5 = this;
 
-      var select = function select(dir) {
+      let select = function select(dir) {
         if (_this5._selection) {
           L__namespace.DomUtil.removeClass(
             _this5._selection,
@@ -2333,7 +2302,7 @@ var leafletControlGeocoder = (function (exports, L) {
 
         case 13:
           if (this._selection) {
-            var index = parseInt(
+            let index = parseInt(
               this._selection.getAttribute("data-result-index"),
               10
             );
@@ -2355,9 +2324,9 @@ var leafletControlGeocoder = (function (exports, L) {
     };
 
     _proto._change = function _change() {
-      var _this6 = this;
+      let _this6 = this;
 
-      var v = this._input.value;
+      let v = this._input.value;
 
       if (v !== this._lastGeocode) {
         clearTimeout(this._suggestTimeout);

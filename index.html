@@ -124,6 +124,13 @@
             <label for="postcode">Kode POS</label>
             <input type="text" name="postcode" id="postcode" class="postcode" />
           </div>
+          <div class="form-group">
+            <label for="latlng">Lat/Lng</label>
+            <div style="display: flex; gap: 30px">
+              <input type="text" name="lat" id="lat" class="lat" />
+              <input type="text" name="lng" id="lng" class="lng" />
+            </div>
+          </div>
         </form>
       </div>
     </div>
@@ -149,16 +156,26 @@
           }).addTo(this.map);
         }
         marker() {
-          let marker = L.marker(this.lat_long, {
-            // draggable: true,
+          let mark = L.marker(this.lat_long, {
+            draggable: true,
           }).addTo(this.markerLayer);
+          this.map.panTo(new L.LatLng(this.lat_long[0], this.lat_long[1]));
+          mark.on("dragend", (event) => {
+            setLatLngDragged(event);
+          });
         }
         newMarker(latLng) {
           this.markerLayer.clearLayers();
 
-          L.marker(latLng, {
-            // draggable: true,
+          let mark = L.marker(latLng, {
+            draggable: true,
           }).addTo(this.markerLayer);
+          if (latLng.length > 0) {
+            this.map.panTo(new L.LatLng(latLng[0], latLng[1]));
+          }
+          mark.on("dragend", (event) => {
+            setLatLngDragged(event);
+          });
         }
       }
 
@@ -171,7 +188,7 @@
 
       async function getAddressInit() {
         const req = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?lat=-6.90156&lon=107.547152&format=json`
+          `https://nominatim.openstreetmap.org/reverse?lat=${lat_long[0]}&lon=${lat_long[1]}&format=json`
         );
         const res = await req.json();
         $(`#province`).val(res.address.state);
@@ -179,12 +196,28 @@
         $(`#kecamatan`).val(res.address?.subdistrict);
         $(`#kelurahan`).val(res.address.village);
         $(`#postcode`).val(res.address.postcode);
+        $(`#lat`).val(res.lat);
+        $(`#lng`).val(res.lon);
       }
 
       leaflet.on("click", async function (e) {
         map.newMarker([e.latlng.lat, e.latlng.lng]);
+        fetchDetail(e.latlng);
+      });
+
+      const setLatLng = (event) => {
+        let marker = event.target;
+        let position = marker.getLatLng();
+        marker.setLatLng(new L.LatLng(position.lat, position.lng), {
+          draggable: "true",
+        });
+        this.map.panTo(new L.LatLng(position.lat, position.lng));
+        fetchDetail(position);
+      };
+
+      const fetchDetail = async (e) => {
         const req = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?lat=${e.latlng.lat}&lon=${e.latlng.lng}&format=json`
+          `https://nominatim.openstreetmap.org/reverse?lat=${e.lat}&lon=${e.lng}&format=json`
         );
         const res = await req.json();
         Toastify({
@@ -208,7 +241,9 @@
         $(`#kecamatan`).val(res.address?.subdistrict);
         $(`#kelurahan`).val(res.address.village);
         $(`#postcode`).val(res.address.postcode);
-      });
+        $(`#lat`).val(res.lat);
+        $(`#lng`).val(res.lon);
+      };
     </script>
   </body>
 </html>
