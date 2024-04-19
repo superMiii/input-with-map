@@ -176,11 +176,18 @@
             this.map.panTo(new L.LatLng(latLng[0], latLng[1]));
           }
           mark.on("dragend", (event) => {
-            console.log(event);
             setLatLngDragged(event, this.map);
           });
         }
       }
+
+      const getFetch = async (lat, long) => {
+        const req = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${long}&format=json`
+        );
+        const res = await req.json();
+        return res;
+      };
 
       let geocoder = L.Control.Geocoder.nominatim();
       let lat_long = [-6.90156, 107.547152];
@@ -190,20 +197,11 @@
       map.init;
 
       async function getAddressInit() {
-        const req = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?lat=${lat_long[0]}&lon=${lat_long[1]}&format=json`
-        );
-        const res = await req.json();
-        $(`#province`).val(res.address?.state);
-        $(`#city`).val(res.address?.city);
-        $(`#kecamatan`).val(res.address?.subdistrict);
-        $(`#kelurahan`).val(res.address?.village);
-        $(`#postcode`).val(res.address?.postcode);
-        $(`#lat`).val(res.lat);
-        $(`#lng`).val(res.lon);
+        let res = await getFetch(lat_long[0], lat_long[1]);
+        setInput(res);
       }
 
-      leaflet.on("click", async function (e) {
+      leaflet.on("click", async (e) => {
         map.newMarker([e.latlng.lat, e.latlng.lng]);
         fetchDetail(e.latlng);
       });
@@ -219,29 +217,18 @@
       };
 
       const fetchDetail = async (e) => {
-        const req = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?lat=${e.lat}&lon=${e.lng}&format=json`
-        );
-        const res = await req.json();
+        let res = await getFetch(e.lat, e.lng);
         if (res.error) {
-          Toastify({
-            text: res.error,
-            duration: 1000,
-            close: true,
-            gravity: "top",
-            position: "center",
-            stopOnFocus: true,
-            style: {
-              background:
-                // "linear-gradient(to right,rgba(0, 212, 255, 1) 0%, rgba(100, 100, 100, 1) 35%, rgba(0, 212, 255, 1) 100%)",
-                "#eaeaea",
-              color: "#121212",
-            },
-          }).showToast();
+          showAlert(res);
           return;
         }
+        showAlert(res);
+        setInput(res);
+      };
+
+      const showAlert = (res) => {
         Toastify({
-          text: res.display_name,
+          text: res.error ? res.error : res.display_name,
           duration: 1000,
           close: true,
           gravity: "top",
@@ -253,8 +240,10 @@
               "#eaeaea",
             color: "#121212",
           },
-          onClick: function () {}, // Callback after click
         }).showToast();
+      };
+
+      const setInput = (res) => {
         $(`#province`).val(res.address?.state);
         $(`#city`).val(res.address?.city);
         $(`#kecamatan`).val(res.address?.subdistrict);
